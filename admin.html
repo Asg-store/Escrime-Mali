@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0e13" />
+  <title>Escrime Mali — Administration</title>
+  <style>
+/* ============================================================
+   ESCRIME MALI — Feuille de style
+   Thème tactique esports : charbon profond + ambre PUBG +
+   vert / rouge Mali. Typo : Rajdhani (titres) + Barlow (texte).
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@600&display=swap');
+
+:root {
+  --bg:        #0b0e13;
+  --bg-2:      #10151d;
+  --panel:     #151b25;
+  --panel-2:   #1b222e;
+  --line:      #262f3d;
+  --line-soft: #1f2733;
+
+  --amber:     #f5a623;   /* accent principal (PUBG) */
+  --amber-dk:  #c77f10;
+  --green:     #2fb862;   /* Mali */
+  --red:       #e63946;   /* Mali / danger */
+  --gold:      #ffd35c;
+
+  --txt:       #e7edf5;
+  --muted:     #8a97a8;
+  --muted-2:   #5c6675;
+
+  --r:   14px;
+  --r-s: 9px;
+  --shadow: 0 18px 40px -20px rgba(0,0,0,.8);
+  --glow: 0 0 0 1px rgba(245,166,35,.35), 0 0 26px -6px rgba(245,166,35,.4);
+
+  --ff-disp: 'Rajdhani', system-ui, sans-serif;
+  --ff-body: 'Barlow', system-ui, sans-serif;
+  --ff-cond: 'Barlow Semi Condensed', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--ff-body);
+  background:
+    radial-gradient(1100px 600px at 80% -10%, rgba(245,166,35,.07), transparent 60%),
+    radial-gradient(900px 500px at -10% 100%, rgba(47,184,98,.06), transparent 55%),
+    var(--bg);
+  color: var(--txt);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+h1,h2,h3,h4 { font-family: var(--ff-disp); font-weight: 700; letter-spacing: .3px; line-height: 1.1; }
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+img, video { max-width: 100%; display: block; }
+input, textarea, select {
+  font-family: var(--ff-body); font-size: 15px; color: var(--txt);
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: var(--r-s); padding: 12px 14px; width: 100%; outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(245,166,35,.15); }
+textarea { resize: vertical; min-height: 90px; }
+::placeholder { color: var(--muted-2); }
+select option { background: var(--bg-2); }
+
+/* ---------- Icônes ---------- */
+.ic { width: 22px; height: 22px; flex: 0 0 auto; }
+.ic-sm { width: 18px; height: 18px; }
+.ic-lg { width: 30px; height: 30px; }
+
+/* ---------- Utilitaires ---------- */
+.row { display: flex; align-items: center; gap: 12px; }
+.col { display: flex; flex-direction: column; gap: 12px; }
+.between { justify-content: space-between; }
+.wrap { flex-wrap: wrap; }
+.grow { flex: 1; }
+.center { align-items: center; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.eyebrow { font-family: var(--ff-cond); text-transform: uppercase; letter-spacing: 2.5px; font-size: 12px; color: var(--amber); }
+.hidden { display: none !important; }
+.mono { font-variant-numeric: tabular-nums; letter-spacing: .5px; }
+
+/* ---------- Boutons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  border: 1px solid var(--line); background: var(--panel-2); color: var(--txt);
+  padding: 12px 18px; border-radius: var(--r-s); font-weight: 600; font-size: 15px;
+  transition: transform .12s, background .18s, border-color .18s, box-shadow .18s;
+}
+.btn:hover { transform: translateY(-1px); border-color: #37435a; }
+.btn:active { transform: translateY(0); }
+.btn:disabled { opacity: .45; pointer-events: none; }
+.btn-primary { background: linear-gradient(135deg, var(--amber), var(--amber-dk)); color: #1a1204; border-color: transparent; }
+.btn-primary:hover { box-shadow: var(--glow); }
+.btn-green { background: linear-gradient(135deg, var(--green), #1e874a); color: #04140a; border-color: transparent; }
+.btn-red { background: linear-gradient(135deg, var(--red), #b3202c); color: #fff; border-color: transparent; }
+.btn-ghost { background: transparent; }
+.btn-block { width: 100%; }
+.btn-sm { padding: 8px 12px; font-size: 13px; }
+.btn .ic { width: 18px; height: 18px; }
+
+/* ---------- Badges & puces ---------- */
+.badge {
+  font-family: var(--ff-cond); text-transform: uppercase; letter-spacing: 1px;
+  font-size: 11px; padding: 4px 9px; border-radius: 100px; border: 1px solid var(--line);
+  color: var(--muted); display: inline-flex; align-items: center; gap: 5px;
+}
+.badge.ok    { color: var(--green); border-color: rgba(47,184,98,.4);  background: rgba(47,184,98,.09); }
+.badge.warn  { color: var(--amber); border-color: rgba(245,166,35,.4); background: rgba(245,166,35,.09); }
+.badge.bad   { color: var(--red);   border-color: rgba(230,57,70,.4);  background: rgba(230,57,70,.09); }
+.badge.live  { color: #ff5252; border-color: rgba(255,82,82,.5); }
+.badge.live::before { content:""; width:7px; height:7px; border-radius:50%; background:#ff5252; animation: pulse 1.2s infinite; }
+
+/* ---------- Cartes ---------- */
+.card {
+  background: linear-gradient(180deg, var(--panel), var(--bg-2));
+  border: 1px solid var(--line); border-radius: var(--r); padding: 18px;
+  box-shadow: var(--shadow); position: relative; overflow: hidden;
+}
+.card::before {
+  content:""; position:absolute; inset:0 0 auto 0; height:2px;
+  background: linear-gradient(90deg, transparent, var(--amber), transparent);
+  opacity:.5;
+}
+
+/* ============================================================
+   AUTHENTIFICATION
+   ============================================================ */
+.auth-wrap { min-height: 100vh; display: grid; place-items: center; padding: 22px; }
+.auth-card { width: 100%; max-width: 420px; }
+.brand-lockup { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 26px; }
+.brand-mark {
+  width: 76px; height: 76px; border-radius: 20px; display: grid; place-items: center;
+  background: linear-gradient(140deg, var(--amber), var(--amber-dk));
+  color: #1a1204; box-shadow: var(--glow); position: relative;
+  animation: floaty 5s ease-in-out infinite;
+}
+.brand-mark .ic { width: 40px; height: 40px; }
+.brand-name { font-family: var(--ff-disp); font-size: 30px; letter-spacing: 2px; text-transform: uppercase; }
+.brand-name b { color: var(--amber); }
+.brand-tag { font-family: var(--ff-cond); text-transform: uppercase; letter-spacing: 3px; font-size: 11px; color: var(--muted); }
+
+.tabs { display: flex; background: var(--bg-2); border: 1px solid var(--line); border-radius: 100px; padding: 4px; margin-bottom: 18px; }
+.tabs button { flex: 1; border: none; background: transparent; color: var(--muted); padding: 10px; border-radius: 100px; font-weight: 600; transition: .2s; }
+.tabs button.active { background: var(--amber); color: #1a1204; }
+
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; font-weight: 500; }
+.divider { display: flex; align-items: center; gap: 12px; color: var(--muted-2); font-size: 13px; margin: 18px 0; }
+.divider::before, .divider::after { content:""; height:1px; background: var(--line); flex:1; }
+
+.btn-google { background: #fff; color: #1f2733; border-color: #fff; }
+.btn-google .ic { color: #1f2733; }
+.btn-google:hover { box-shadow: 0 0 24px -8px rgba(255,255,255,.5); }
+
+/* ============================================================
+   COQUE APPLICATION (nav + contenu)
+   ============================================================ */
+.app-shell { min-height: 100vh; padding-bottom: 84px; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 13px 16px; background: rgba(11,14,19,.85); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.topbar .brand-name { font-size: 20px; letter-spacing: 1px; }
+.topbar-mark { width: 34px; height: 34px; border-radius: 9px; display:grid; place-items:center; background: linear-gradient(140deg,var(--amber),var(--amber-dk)); color:#1a1204; }
+.topbar-mark .ic { width: 20px; height: 20px; }
+.icon-btn {
+  width: 42px; height: 42px; border-radius: 11px; border: 1px solid var(--line);
+  background: var(--panel-2); color: var(--txt); display: grid; place-items: center;
+  position: relative; transition: .18s;
+}
+.icon-btn:hover { border-color: var(--amber); color: var(--amber); }
+.notif-dot { position: absolute; top: 8px; right: 9px; width: 9px; height: 9px; border-radius: 50%; background: var(--red); border: 2px solid var(--panel-2); }
+
+.content { max-width: 940px; margin: 0 auto; padding: 20px 16px; }
+.screen { animation: fadeUp .4s ease; }
+.screen-head { margin-bottom: 18px; }
+.screen-head h2 { font-size: 26px; text-transform: uppercase; }
+
+/* barre de navigation basse (mobile-first) */
+.tabbar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  display: grid; grid-template-columns: repeat(6,1fr);
+  background: rgba(14,18,25,.94); backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line);
+}
+.tabbar button {
+  border: none; background: transparent; color: var(--muted-2);
+  padding: 9px 4px 10px; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  font-family: var(--ff-cond); font-size: 10px; letter-spacing: .6px; text-transform: uppercase;
+  transition: color .2s; position: relative;
+}
+.tabbar button .ic { width: 23px; height: 23px; }
+.tabbar button.active { color: var(--amber); }
+.tabbar button.active::before {
+  content:""; position:absolute; top:0; left:50%; transform: translateX(-50%);
+  width: 26px; height: 3px; border-radius: 0 0 4px 4px; background: var(--amber);
+}
+.tabbar .tab-badge { position:absolute; top:6px; right: calc(50% - 20px); min-width:16px; height:16px; padding:0 4px; border-radius:100px; background:var(--red); color:#fff; font-size:10px; display:grid; place-items:center; }
+
+/* ============================================================
+   GRILLES / LISTES
+   ============================================================ */
+.grid { display: grid; gap: 14px; }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-auto { grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); }
+
+.stat {
+  background: linear-gradient(180deg,var(--panel),var(--bg-2));
+  border: 1px solid var(--line); border-radius: var(--r); padding: 16px;
+}
+.stat .k { font-family: var(--ff-disp); font-size: 30px; color: var(--amber); }
+.stat .l { font-family: var(--ff-cond); text-transform: uppercase; letter-spacing: 1.4px; font-size: 11px; color: var(--muted); }
+.stat.green .k { color: var(--green); } .stat.red .k { color: var(--red); }
+
+/* carte de match */
+.match-card { cursor: pointer; transition: transform .15s, border-color .2s; }
+.match-card:hover { transform: translateY(-3px); border-color: var(--amber); }
+.match-banner {
+  height: 108px; border-radius: var(--r-s); margin: -18px -18px 14px;
+  background:
+    linear-gradient(180deg, transparent 40%, rgba(11,14,19,.9)),
+    repeating-linear-gradient(135deg, #1b2431 0 16px, #18202c 16px 32px);
+  position: relative; display: flex; align-items: flex-end; padding: 12px 16px;
+}
+.match-banner::after {
+  content:""; position:absolute; inset:0; opacity:.14;
+  background: radial-gradient(circle at 78% 20%, var(--amber), transparent 45%);
+}
+.match-title { font-family: var(--ff-disp); font-size: 20px; text-transform: uppercase; z-index:1; }
+.meta-line { display:flex; flex-wrap:wrap; gap: 6px 16px; color: var(--muted); font-size: 14px; }
+.meta-line .row { gap: 6px; }
+.meta-line .ic { width: 16px; height: 16px; color: var(--amber); }
+
+.progress { height: 8px; border-radius: 100px; background: var(--bg-2); overflow: hidden; border: 1px solid var(--line); }
+.progress > i { display:block; height:100%; background: linear-gradient(90deg,var(--amber),var(--gold)); transition: width .5s; }
+
+/* liste d'éléments */
+.list-item {
+  display: flex; align-items: center; gap: 12px; padding: 13px 14px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-s);
+}
+.avatar {
+  width: 42px; height: 42px; border-radius: 11px; flex: 0 0 auto;
+  background: linear-gradient(140deg, var(--panel-2), var(--bg-2));
+  border: 1px solid var(--line); display: grid; place-items: center;
+  font-family: var(--ff-disp); color: var(--amber); font-size: 18px; overflow: hidden;
+}
+.avatar img { width:100%; height:100%; object-fit: cover; }
+.rank-pill { font-family: var(--ff-disp); font-size: 15px; width: 34px; height: 34px; border-radius: 9px; display:grid; place-items:center; background: var(--bg-2); border: 1px solid var(--line); }
+.rank-1 { color:#04140a; background: linear-gradient(140deg,var(--gold),#e0a800); border:none; }
+.rank-2 { color:#04140a; background: linear-gradient(140deg,#cfd8e3,#9aa6b5); border:none; }
+.rank-3 { color:#fff; background: linear-gradient(140deg,#c77f10,#8a5606); border:none; }
+
+/* ============================================================
+   SHORTS (façon TikTok)
+   ============================================================ */
+.shorts-feed { max-width: 460px; margin: 0 auto; height: calc(100vh - 150px); overflow-y: scroll; scroll-snap-type: y mandatory; border-radius: var(--r); border: 1px solid var(--line); }
+.short {
+  position: relative; height: calc(100vh - 150px); scroll-snap-align: start;
+  background: #000; display: grid; place-items: center; overflow: hidden;
+}
+.short video, .short img { width: 100%; height: 100%; object-fit: cover; }
+.short-overlay { position: absolute; inset: auto 0 0 0; padding: 18px 16px 22px; background: linear-gradient(transparent, rgba(0,0,0,.85)); }
+.short-side { position: absolute; right: 12px; bottom: 90px; display: flex; flex-direction: column; gap: 18px; align-items: center; }
+.short-side button { border:none; background: rgba(0,0,0,.35); color:#fff; width:48px; height:48px; border-radius:50%; display:grid; place-items:center; backdrop-filter: blur(6px); transition:.15s; }
+.short-side button:hover { color: var(--amber); transform: scale(1.08); }
+.short-side .count { font-size: 12px; color:#fff; font-weight:600; }
+
+/* ============================================================
+   CHAT
+   ============================================================ */
+.chat-wrap { display: flex; flex-direction: column; height: calc(100vh - 150px); background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.chat-stream { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.msg { max-width: 78%; display: flex; flex-direction: column; gap: 3px; }
+.msg .who { font-size: 12px; color: var(--amber); font-weight: 600; }
+.bubble { background: var(--panel-2); border: 1px solid var(--line); padding: 9px 13px; border-radius: 13px 13px 13px 4px; word-break: break-word; }
+.msg.me { align-self: flex-end; align-items: flex-end; }
+.msg.me .bubble { background: linear-gradient(135deg, var(--amber), var(--amber-dk)); color: #1a1204; border-color: transparent; border-radius: 13px 13px 4px 13px; }
+.msg .time { font-size: 10px; color: var(--muted-2); }
+.msg audio { max-width: 240px; }
+.msg img, .msg video { border-radius: 10px; max-height: 220px; }
+.chat-input { display: flex; align-items: center; gap: 8px; padding: 10px; border-top: 1px solid var(--line); background: var(--panel); }
+.chat-input input { border-radius: 100px; }
+.rec-dot { color: var(--red); animation: pulse 1s infinite; }
+
+/* fils privés */
+.thread-item { cursor: pointer; }
+.thread-item:hover { border-color: var(--amber); }
+
+/* ============================================================
+   MODALE
+   ============================================================ */
+.modal-back { position: fixed; inset: 0; z-index: 100; background: rgba(4,6,9,.72); backdrop-filter: blur(4px); display: grid; place-items: center; padding: 18px; animation: fade .2s; }
+.modal { width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); animation: fadeUp .28s; }
+.modal-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+.modal-head h3 { font-size: 20px; text-transform: uppercase; }
+.modal-body { padding: 18px; }
+.modal-foot { padding: 14px 18px; border-top: 1px solid var(--line); display: flex; gap: 10px; justify-content: flex-end; }
+
+/* ============================================================
+   TOASTS
+   ============================================================ */
+.toasts { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 10px; width: calc(100% - 32px); max-width: 400px; }
+.toast { display: flex; align-items: center; gap: 10px; padding: 13px 15px; border-radius: var(--r-s); background: var(--panel-2); border: 1px solid var(--line); box-shadow: var(--shadow); animation: slideDown .3s; }
+.toast.ok { border-color: rgba(47,184,98,.5); } .toast.ok .ic { color: var(--green); }
+.toast.err { border-color: rgba(230,57,70,.5); } .toast.err .ic { color: var(--red); }
+.toast.info .ic { color: var(--amber); }
+
+/* ============================================================
+   ADMIN
+   ============================================================ */
+.admin-body { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
+.admin-side { background: var(--bg-2); border-right: 1px solid var(--line); padding: 18px 14px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.admin-side .brand-name { font-size: 20px; margin-bottom: 4px; }
+.admin-nav { display: flex; flex-direction: column; gap: 4px; margin-top: 20px; }
+.admin-nav button {
+  display: flex; align-items: center; gap: 11px; border: none; background: transparent;
+  color: var(--muted); padding: 11px 12px; border-radius: var(--r-s); font-weight: 500;
+  font-size: 15px; text-align: left; transition: .18s;
+}
+.admin-nav button:hover { background: var(--panel); color: var(--txt); }
+.admin-nav button.active { background: var(--panel-2); color: var(--amber); box-shadow: inset 3px 0 0 var(--amber); }
+.admin-nav .ic { width: 20px; height: 20px; }
+.admin-main { padding: 24px; overflow-x: hidden; }
+
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line-soft); font-size: 14px; }
+.table th { font-family: var(--ff-cond); text-transform: uppercase; letter-spacing: 1px; font-size: 12px; color: var(--muted); }
+.table tr:hover td { background: var(--panel); }
+.table-wrap { border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+
+.toggle { position: relative; width: 48px; height: 26px; flex: 0 0 auto; }
+.toggle input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.toggle span { position: absolute; inset: 0; background: var(--bg-2); border: 1px solid var(--line); border-radius: 100px; transition: .2s; }
+.toggle span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--muted); transition: .2s; }
+.toggle input:checked + span { background: rgba(47,184,98,.25); border-color: var(--green); }
+.toggle input:checked + span::after { transform: translateX(22px); background: var(--green); }
+
+/* état vide */
+.empty { text-align: center; padding: 46px 20px; color: var(--muted); }
+.empty .ic { width: 46px; height: 46px; color: var(--muted-2); margin-bottom: 10px; }
+
+/* chargement */
+.spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--amber); animation: spin .8s linear infinite; margin: 30px auto; }
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(1.5); } }
+@keyframes fade { from { opacity: 0; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-14px); } }
+@keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes shimmer { to { background-position: 200% 0; } }
+
+.skeleton { background: linear-gradient(90deg, var(--panel) 25%, var(--panel-2) 50%, var(--panel) 75%); background-size: 200% 100%; animation: shimmer 1.3s infinite; border-radius: var(--r-s); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 760px) {
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+  .admin-body { grid-template-columns: 1fr; }
+  .admin-side { position: static; height: auto; }
+  .admin-nav { flex-direction: row; overflow-x: auto; }
+  .admin-nav button { white-space: nowrap; }
+  .admin-nav button.active { box-shadow: inset 0 -3px 0 var(--amber); }
+}
+@media (max-width: 460px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .screen-head h2 { font-size: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; scroll-behavior: auto; }
+}
+
+</style>
+</head>
+<body>
+
+  <!-- Verrou d'accès -->
+  <section id="gate" class="auth-wrap">
+    <div class="auth-card card" style="text-align:center">
+      <div class="brand-lockup">
+        <div class="brand-mark" data-icon="shield"></div>
+        <div class="brand-name">ADMIN <b>MALI</b></div>
+        <div class="brand-tag">Accès réservé à l'administration</div>
+      </div>
+      <div id="gateMsg" class="spinner"></div>
+      <a href="index.html" class="btn btn-ghost btn-block" style="margin-top:14px" data-icon="logout">Retour à l'application</a>
+    </div>
+  </section>
+
+  <!-- Console admin -->
+  <section id="console" class="admin-body hidden">
+    <aside class="admin-side">
+      <div class="row" style="gap:10px;margin-bottom:2px">
+        <div class="topbar-mark" data-icon="shield"></div>
+        <div class="brand-name">ADMIN <b style="color:var(--amber)">MALI</b></div>
+      </div>
+      <div class="brand-tag">Console de gestion</div>
+      <nav class="admin-nav" id="adminNav">
+        <button data-page="dashboard" class="active"><span data-icon="chart"></span>Tableau de bord</button>
+        <button data-page="matches"><span data-icon="trophy"></span>Matchs & tournois</button>
+        <button data-page="qualif"><span data-icon="medal"></span>Qualifications</button>
+        <button data-page="players"><span data-icon="users"></span>Joueurs</button>
+        <button data-page="announce"><span data-icon="bell"></span>Annonces</button>
+        <button data-page="config"><span data-icon="money"></span>Inscriptions & prix</button>
+        <button data-page="support"><span data-icon="headset"></span>Support</button>
+        <button data-page="shorts"><span data-icon="video"></span>Modération Shorts</button>
+        <button data-page="chat"><span data-icon="chat"></span>Modération Chat</button>
+      </nav>
+      <button id="installAppBtn" class="btn btn-primary btn-block" style="margin-top:18px" data-icon="download">Installer l'application</button>
+      <a href="index.html" class="btn btn-ghost btn-block" style="margin-top:10px" data-icon="logout">Quitter</a>
+    </aside>
+    <main class="admin-main" id="adminMain"></main>
+  </section>
+
+  <div id="modalRoot"></div>
+  <div class="toasts" id="toastRoot"></div>
+
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+import { getDatabase, ref, get, set, update, push, onValue, remove, query, orderByChild, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js";
+
+/* ---------- Configuration Firebase ---------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyDr4lvkTyMaWxEPDwtSmtojSefL65HG7ac",
+  authDomain: "mali-pubg.firebaseapp.com",
+  databaseURL: "https://mali-pubg-default-rtdb.firebaseio.com",
+  projectId: "mali-pubg",
+  storageBucket: "mali-pubg.firebasestorage.app",
+  messagingSenderId: "883934440761",
+  appId: "1:883934440761:web:bcee8f6b67cac43f474ce8"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+const db = getDatabase(app);
+const storage = getStorage(app);
+const googleProvider = new GoogleAuthProvider();
+
+// Liste de secours : ces adresses e-mail seront traitées comme
+// administrateurs même si le rôle n'est pas encore défini dans la base.
+// (Vous pouvez aussi définir role:"admin" dans la Realtime Database.)
+const ADMIN_EMAILS = [
+  // "votre-email@gmail.com"
+];
+
+/* ---------- Icônes SVG ---------- */
+// ============================================================
+//  ESCRIME MALI — Bibliothèque d'icônes (SVG pur, pas d'emoji)
+// ============================================================
+//  Chaque icône est un tracé SVG. Utiliser icon('nom') pour
+//  obtenir le balisage, ou data-icon="nom" dans le HTML puis
+//  appeler injectIcons().
+// ============================================================
+
+const P = { fill: "none", stroke: "currentColor", "stroke-width": "1.8", "stroke-linecap": "round", "stroke-linejoin": "round" };
+
+const PATHS = {
+  home:        '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
+  trophy:      '<path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3v2a3 3 0 0 1-3 3"/><path d="M7 5H4v2a3 3 0 0 0 3 3"/>',
+  target:      '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/>',
+  crosshair:   '<circle cx="12" cy="12" r="8"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>',
+  users:       '<circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 5.5a3 3 0 0 1 0 6"/><path d="M18 20a5.5 5.5 0 0 0-3-4.9"/>',
+  user:        '<circle cx="12" cy="8" r="3.6"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  shield:      '<path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/>',
+  video:       '<rect x="2.5" y="6" width="13" height="12" rx="2.5"/><path d="M15.5 10l6-3v10l-6-3z"/>',
+  play:        '<circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z" fill="currentColor" stroke="none"/>',
+  camera:      '<path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/>',
+  chat:        '<path d="M4 5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-5 4V6a1 1 0 0 1 1-1z"/>',
+  mic:         '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/>',
+  send:        '<path d="M21 3L3 11l7 3 3 7 8-18z"/><path d="M10 14l4-4"/>',
+  lock:        '<rect x="4.5" y="10" width="15" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+  bell:        '<path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  info:        '<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r="0.9" fill="currentColor" stroke="none"/>',
+  medal:       '<circle cx="12" cy="15" r="5"/><path d="M12 13v4M10.2 15h3.6" opacity="0"/><path d="M8.5 3l2.5 6M15.5 3L13 9"/><path d="M12 12.5l.9 1.9 2 .2-1.5 1.4.4 2-1.8-1-1.8 1 .4-2L9 14.6l2-.2z" fill="currentColor" stroke="none"/>',
+  flag:        '<path d="M5 21V4"/><path d="M5 4h11l-2 3 2 3H5"/>',
+  calendar:    '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9h17M8 3v4M16 3v4"/>',
+  clock:       '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+  money:       '<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 9v6M18 9v6"/>',
+  settings:    '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/>',
+  logout:      '<path d="M14 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4"/><path d="M9 12h11M16 8l4 4-4 4"/>',
+  google:      '<path d="M21 12.2c0-.6-.1-1.2-.2-1.8H12v3.6h5.1a4.4 4.4 0 0 1-1.9 2.9v2.4h3.1c1.8-1.7 2.7-4.1 2.7-7.1z"/><path d="M12 21c2.4 0 4.5-.8 6-2.2l-3.1-2.4c-.8.6-1.9.9-2.9.9-2.3 0-4.2-1.5-4.9-3.6H3.9v2.4A9 9 0 0 0 12 21z"/><path d="M7.1 13.7a5.4 5.4 0 0 1 0-3.4V7.9H3.9a9 9 0 0 0 0 8.2z"/><path d="M12 6.6c1.3 0 2.5.5 3.4 1.3l2.6-2.6A9 9 0 0 0 3.9 7.9l3.2 2.4C7.8 8.1 9.7 6.6 12 6.6z"/>',
+  mail:        '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6 8.5-6"/>',
+  plus:        '<path d="M12 5v14M5 12h14"/>',
+  close:       '<path d="M6 6l12 12M18 6L6 18"/>',
+  check:       '<path d="M4 12l5 5L20 6"/>',
+  edit:        '<path d="M16 4l4 4-11 11H5v-4z"/><path d="M13.5 6.5l4 4"/>',
+  trash:       '<path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13h10l1-13"/>',
+  heart:       '<path d="M12 20s-7-4.4-9.2-8.4A4.7 4.7 0 0 1 12 6a4.7 4.7 0 0 1 9.2 5.6C19 15.6 12 20 12 20z"/>',
+  eye:         '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+  upload:      '<path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',
+  download:    '<path d="M12 4v12M8 12l4 4 4-4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',
+  map:         '<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>',
+  grid:        '<rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/>',
+  headset:     '<path d="M4 13a8 8 0 0 1 16 0"/><rect x="3" y="13" width="4" height="7" rx="1.5"/><rect x="17" y="13" width="4" height="7" rx="1.5"/><path d="M20 18v1a3 3 0 0 1-3 3h-3"/>',
+  fire:        '<path d="M12 3s5 4 5 9a5 5 0 0 1-10 0c0-1.5.6-2.7 1.4-3.6C8.5 10 9 12 10 12c1.3 0 1-3 2-9z"/>',
+  chart:       '<path d="M4 20V4M4 20h16"/><rect x="7" y="12" width="3" height="5"/><rect x="12" y="8" width="3" height="9"/><rect x="17" y="5" width="3" height="12"/>',
+  crown:       '<path d="M4 8l4 4 4-6 4 6 4-4-1.5 10H5.5L4 8z"/><path d="M5.5 18h13"/>',
+  refresh:     '<path d="M20 11a8 8 0 0 0-14-4.5L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14 4.5L20 16"/><path d="M20 20v-4h-4"/>',
+  search:      '<circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/>',
+  ban:         '<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
+  award:       '<path d="M12 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/><path d="M8.5 13.5L7 22l5-2 5 2-1.5-8.5"/>',
+};
+
+function icon(name, cls = "") {
+  const d = PATHS[name] || PATHS.info;
+  const attrs = Object.entries(P).map(([k, v]) => `${k}="${v}"`).join(" ");
+  return `<svg class="ic ${cls}" viewBox="0 0 24 24" ${attrs} aria-hidden="true">${d}</svg>`;
+}
+
+function injectIcons(root = document) {
+  root.querySelectorAll("[data-icon]").forEach((el) => {
+    if (el.dataset.iconDone) return;
+    el.insertAdjacentHTML("afterbegin", icon(el.dataset.icon));
+    el.dataset.iconDone = "1";
+  });
+}
+
+
+/* ---------- Aides UI ---------- */
+// ============================================================
+//  ESCRIME MALI — Aides UI partagées
+// ============================================================
+
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+const esc = (s = "") =>
+  String(s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+const initials = (name = "?") =>
+  name.trim().split(/\s+/).slice(0, 2).map((w) => w[0] || "").join("").toUpperCase() || "?";
+
+const fmtMoney = (n) =>
+  (Number(n) || 0).toLocaleString("fr-FR") + " FCFA";
+
+function fmtDate(d, t) {
+  if (!d) return "Date à venir";
+  try {
+    const dd = new Date(d + (t ? "T" + t : "T00:00"));
+    const opt = { weekday: "short", day: "numeric", month: "short" };
+    let s = dd.toLocaleDateString("fr-FR", opt);
+    if (t) s += " · " + t;
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  } catch { return d + (t ? " " + t : ""); }
+}
+
+function timeAgo(ts) {
+  if (!ts) return "";
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60) return "à l'instant";
+  if (s < 3600) return Math.floor(s / 60) + " min";
+  if (s < 86400) return Math.floor(s / 3600) + " h";
+  return new Date(ts).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+}
+
+/* ---------- Toasts ---------- */
+function toast(msg, type = "info") {
+  const root = $("#toastRoot") || document.body;
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  const ico = type === "ok" ? "check" : type === "err" ? "close" : "info";
+  el.innerHTML = icon(ico) + `<span>${esc(msg)}</span>`;
+  root.appendChild(el);
+  setTimeout(() => { el.style.opacity = "0"; el.style.transform = "translateY(-10px)"; el.style.transition = ".3s"; }, 3200);
+  setTimeout(() => el.remove(), 3600);
+}
+
+/* ---------- Modale ---------- */
+function modal({ title, body, footer = "", onOpen }) {
+  const root = $("#modalRoot") || document.body;
+  const back = document.createElement("div");
+  back.className = "modal-back";
+  back.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3>${esc(title)}</h3>
+        <button class="icon-btn" data-close style="width:36px;height:36px">${icon("close")}</button>
+      </div>
+      <div class="modal-body">${body}</div>
+      ${footer ? `<div class="modal-foot">${footer}</div>` : ""}
+    </div>`;
+  const close = () => back.remove();
+  back.addEventListener("click", (e) => { if (e.target === back || e.target.closest("[data-close]")) close(); });
+  root.appendChild(back);
+  onOpen?.(back, close);
+  return { el: back, close };
+}
+
+function confirmModal(message, onYes, { danger = false, yes = "Confirmer" } = {}) {
+  const { el, close } = modal({
+    title: "Confirmation",
+    body: `<p style="color:var(--muted)">${esc(message)}</p>`,
+    footer: `<button class="btn btn-ghost" data-close>Annuler</button>
+             <button class="btn ${danger ? "btn-red" : "btn-primary"}" data-yes>${esc(yes)}</button>`,
+  });
+  el.querySelector("[data-yes]").onclick = () => { close(); onYes(); };
+}
+
+const spinner = () => `<div class="spinner"></div>`;
+const empty = (ic, text) =>
+  `<div class="empty">${icon(ic)}<p>${esc(text)}</p></div>`;
+
+
+/* ---------- Application ---------- */
+
+const A = { user: null, profile: null, page: "dashboard", listeners: [] };
+const clear = () => { A.listeners.forEach((f) => f()); A.listeners = []; };
+const watch = (fn) => A.listeners.push(fn);
+const snapList = (s) => { const o = []; s.forEach((c) => { const v = c.val() || {}; v.id = c.key; o.push(v); }); return o; };
+
+injectIcons();
+
+/* ---------------- Contrôle d'accès ---------------- */
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { gate("Vous devez être connecté. Redirection…"); setTimeout(() => location.href = "index.html", 1500); return; }
+  A.user = user;
+  const p = (await get(ref(db, "users/" + user.uid))).val() || {};
+  const isAdmin = p.role === "admin" || ADMIN_EMAILS.includes(user.email);
+  if (!isAdmin) { gate("Accès refusé : ce compte n'est pas administrateur."); return; }
+  A.profile = p;
+  $("#gate").classList.add("hidden");
+  $("#console").classList.remove("hidden");
+  onValue(ref(db, "config/logoURL"), (s) => applyBranding(s.val()));
+  $("#adminNav").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-page]"); if (!b) return;
+    go(b.dataset.page);
+  });
+  go("dashboard");
+});
+
+function applyBranding(logo) {
+  document.querySelectorAll(".brand-mark, .topbar-mark").forEach((el) => {
+    if (logo) {
+      el.innerHTML = `<img src="${esc(logo)}" alt="logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`;
+      el.dataset.iconDone = "1";
+    }
+  });
+}
+
+async function uploadFile(file, folder) {
+  const path = `${folder}/${A.user.uid}/${Date.now()}_${file.name}`;
+  const r = sRef(storage, path);
+  await uploadBytes(r, file);
+  return await getDownloadURL(r);
+}
+
+function gate(msg) { $("#gateMsg").outerHTML = `<p class="muted">${esc(msg)}</p>`; }
+
+function go(page) {
+  A.page = page; clear();
+  $$("#adminNav button").forEach((b) => b.classList.toggle("active", b.dataset.page === page));
+  const m = $("#adminMain"); m.innerHTML = spinner();
+  ({ dashboard: pgDashboard, matches: pgMatches, qualif: pgQualif, players: pgPlayers,
+     announce: pgAnnounce, config: pgConfig, support: pgSupport, shorts: pgShorts, chat: pgChat }[page])(m);
+}
+
+const head = (eyebrow, title, action = "") =>
+  `<div class="screen-head row between"><div><div class="eyebrow">${eyebrow}</div><h2>${title}</h2></div>${action}</div>`;
+const stat = (k, l, ic, cls = "") =>
+  `<div class="stat ${cls}"><div class="row between"><div class="k">${k}</div>${icon(ic)}</div><div class="l">${l}</div></div>`;
+
+/* ============================================================
+   TABLEAU DE BORD
+   ============================================================ */
+function pgDashboard(m) {
+  m.innerHTML = head("Vue d'ensemble", "Tableau de bord") + `<div class="grid grid-3" id="ds">${spinner()}</div>
+    <div class="screen-head" style="margin-top:24px"><div class="eyebrow">Activité</div><h2 style="font-size:20px">Derniers tickets support</h2></div>
+    <div class="table-wrap"><table class="table"><thead><tr><th>Joueur</th><th>Sujet</th><th>Statut</th><th>Date</th></tr></thead><tbody id="dsSup"></tbody></table></div>`;
+
+  const state = {};
+  const refresh = () => {
+    if (state.matches === undefined || state.users === undefined) return;
+    const live = state.matches.filter((x) => x.status === "live").length;
+    const openReg = state.matches.filter((x) => x.registrationOpen).length;
+    $("#ds").innerHTML =
+      stat(state.users.length, "Joueurs inscrits", "users", "green") +
+      stat(state.matches.length, "Tournois", "trophy") +
+      stat(openReg, "Inscriptions ouvertes", "flag") +
+      stat(live, "Matchs en direct", "fire", "red") +
+      stat(state.tickets?.filter((t) => t.status !== "closed").length || 0, "Tickets ouverts", "headset", "red") +
+      stat(state.shorts || 0, "Shorts publiés", "video");
+  };
+  watch(onValue(ref(db, "matches"), (s) => { state.matches = snapList(s); refresh(); }));
+  watch(onValue(ref(db, "users"), (s) => { state.users = snapList(s); refresh(); }));
+  watch(onValue(ref(db, "shorts"), (s) => { state.shorts = s.size; refresh(); }));
+  watch(onValue(ref(db, "support"), (s) => {
+    state.tickets = snapList(s); refresh();
+    const rows = state.tickets.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 6);
+    $("#dsSup").innerHTML = rows.length ? rows.map((t) => `<tr><td>${esc(t.name)}</td><td>${esc(t.subject)}</td>
+      <td>${badgeStatus(t.status)}</td><td>${timeAgo(t.createdAt)}</td></tr>`).join("")
+      : `<tr><td colspan="4" class="muted">Aucun ticket.</td></tr>`;
+  }));
+}
+const badgeStatus = (s) => `<span class="badge ${s === "closed" ? "bad" : s === "answered" ? "ok" : "warn"}">${s === "closed" ? "Clos" : s === "answered" ? "Répondu" : "Ouvert"}</span>`;
+
+/* ============================================================
+   MATCHS & TOURNOIS
+   ============================================================ */
+function pgMatches(m) {
+  m.innerHTML = head("Compétitions", "Matchs & tournois",
+    `<button class="btn btn-primary" id="addMatch">${icon("plus")} Nouveau match</button>`) +
+    `<div class="grid grid-auto" id="mList">${spinner()}</div>`;
+  $("#addMatch").onclick = () => matchForm();
+  watch(onValue(ref(db, "matches"), (s) => {
+    const list = snapList(s).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    $("#mList").innerHTML = list.length ? list.map(adminMatchCard).join("") : empty("trophy", "Aucun match créé.");
+    list.forEach((mm) => {
+      const card = $(`[data-mid="${mm.id}"]`);
+      card.querySelector("[data-edit]").onclick = () => matchForm(mm);
+      card.querySelector("[data-del]").onclick = () => confirmModal(`Supprimer « ${mm.title} » ?`, () => remove(ref(db, "matches/" + mm.id)), { danger: true, yes: "Supprimer" });
+      card.querySelector("[data-reg]").onchange = (e) => update(ref(db, "matches/" + mm.id), { registrationOpen: e.target.checked });
+      card.querySelector("[data-status]").onchange = (e) => update(ref(db, "matches/" + mm.id), { status: e.target.value });
+    });
+  }));
+}
+
+function adminMatchCard(m) {
+  const players = m.teams ? Object.values(m.teams).reduce((s, t) => s + (t.members ? Object.keys(t.members).length : 0), 0) : 0;
+  const teams = m.teams ? Object.keys(m.teams).length : 0;
+  return `<div class="card" data-mid="${m.id}">
+    <div class="row between"><b style="font-family:var(--ff-disp);font-size:19px">${esc(m.title)}</b>
+      <span class="badge warn">${m.freeEntry ? "Gratuit" : fmtMoney(m.entryFee)}</span></div>
+    <div class="meta-line" style="margin:10px 0">
+      <span class="row">${icon("calendar")}${fmtDate(m.date, m.time)}</span>
+      <span class="row">${icon("users")}${players}/${m.maxPlayers || 100}</span>
+      <span class="row">${icon("shield")}${teams}/${m.maxTeams || 25}</span>
+    </div>
+    <div class="field" style="margin:8px 0 12px"><label>Statut</label>
+      <select data-status>
+        <option value="upcoming" ${m.status === "upcoming" ? "selected" : ""}>À venir</option>
+        <option value="live" ${m.status === "live" ? "selected" : ""}>En direct</option>
+        <option value="finished" ${m.status === "finished" ? "selected" : ""}>Terminé</option>
+      </select></div>
+    <div class="list-item" style="margin-bottom:12px"><div class="grow"><b>Inscriptions ouvertes</b>
+      <div class="small muted">Fermer pour bloquer les nouvelles équipes</div></div>
+      <label class="toggle"><input type="checkbox" data-reg ${m.registrationOpen ? "checked" : ""}><span></span></label></div>
+    <div class="row" style="gap:8px">
+      <button class="btn btn-sm grow" data-edit>${icon("edit")} Modifier</button>
+      <button class="btn btn-sm btn-red" data-del>${icon("trash")}</button>
+    </div>
+  </div>`;
+}
+
+function matchForm(m = {}) {
+  const isEdit = !!m.id;
+  const { el, close } = modal({
+    title: isEdit ? "Modifier le match" : "Nouveau match",
+    body: `
+      <div class="field"><label>Titre du tournoi</label><input id="f_title" value="${esc(m.title || "")}" placeholder="Ex : Escrime Mali Cup #1"></div>
+      <div class="grid grid-2">
+        <div class="field"><label>Date</label><input type="date" id="f_date" value="${esc(m.date || "")}"></div>
+        <div class="field"><label>Heure</label><input type="time" id="f_time" value="${esc(m.time || "")}"></div>
+      </div>
+      <div class="grid grid-2">
+        <div class="field"><label>Carte</label>
+          <select id="f_map">${["Erangel","Miramar","Sanhok","Vikendi","Livik","Karakin"].map((x) => `<option ${m.map === x ? "selected" : ""}>${x}</option>`).join("")}</select></div>
+        <div class="field"><label>Mode</label>
+          <select id="f_mode">${["Solo","Duo","Squad","TDM"].map((x) => `<option ${m.mode === x ? "selected" : ""} ${!m.mode && x==="Squad"?"selected":""}>${x}</option>`).join("")}</select></div>
+      </div>
+      <div class="grid grid-3">
+        <div class="field"><label>Max joueurs</label><input type="number" id="f_mp" value="${m.maxPlayers || 100}"></div>
+        <div class="field"><label>Max équipes</label><input type="number" id="f_mt" value="${m.maxTeams || 25}"></div>
+        <div class="field"><label>Joueurs/équipe</label><input type="number" id="f_tm" value="${m.teamMax || 4}" min="1" max="4"></div>
+      </div>
+      <div class="grid grid-2">
+        <div class="field"><label>Cash prize (FCFA)</label><input type="number" id="f_pp" value="${m.prizePool || 0}"></div>
+        <div class="field"><label>Frais d'entrée (FCFA)</label><input type="number" id="f_ef" value="${m.entryFee || 0}"></div>
+      </div>
+      <div class="list-item" style="margin-bottom:12px"><div class="grow"><b>Entrée gratuite</b></div>
+        <label class="toggle"><input type="checkbox" id="f_free" ${m.freeEntry !== false ? "checked" : ""}><span></span></label></div>
+      <div class="field"><label>Règlement (optionnel)</label><textarea id="f_rules" placeholder="Règles du tournoi, points, etc.">${esc(m.rules || "")}</textarea></div>`,
+    footer: `<button class="btn btn-ghost" data-close>Annuler</button><button class="btn btn-primary" data-ok>${isEdit ? "Enregistrer" : "Créer"}</button>`,
+  });
+  el.querySelector("[data-ok]").onclick = async () => {
+    const g = (id) => el.querySelector(id);
+    const title = g("#f_title").value.trim();
+    if (!title) return toast("Le titre est requis.", "err");
+    const data = {
+      title, date: g("#f_date").value, time: g("#f_time").value,
+      map: g("#f_map").value, mode: g("#f_mode").value,
+      maxPlayers: +g("#f_mp").value || 100, maxTeams: +g("#f_mt").value || 25, teamMax: +g("#f_tm").value || 4,
+      prizePool: +g("#f_pp").value || 0, entryFee: +g("#f_ef").value || 0,
+      freeEntry: g("#f_free").checked, rules: g("#f_rules").value.trim(),
+    };
+    if (isEdit) { await update(ref(db, "matches/" + m.id), data); }
+    else { data.status = "upcoming"; data.registrationOpen = true; data.createdAt = serverTimestamp();
+      await set(ref(db, "matches/" + push(ref(db, "matches")).key), data); }
+    close(); toast(isEdit ? "Match mis à jour." : "Match créé.", "ok");
+  };
+}
+
+/* ============================================================
+   QUALIFICATIONS / RÉSULTATS
+   ============================================================ */
+function pgQualif(m) {
+  m.innerHTML = head("Résultats", "Qualifications & classement") +
+    `<div class="field" style="max-width:420px"><label>Choisir un match</label><select id="qMatch"></select></div><div id="qBody" style="margin-top:16px"></div>`;
+  watch(onValue(ref(db, "matches"), (s) => {
+    const list = snapList(s);
+    const sel = $("#qMatch");
+    const cur = sel.value;
+    sel.innerHTML = list.length ? list.map((x) => `<option value="${x.id}">${esc(x.title)}</option>`).join("") : `<option>Aucun match</option>`;
+    if (cur) sel.value = cur;
+    sel.onchange = () => renderQualif(list.find((x) => x.id === sel.value));
+    renderQualif(list.find((x) => x.id === sel.value) || list[0]);
+  }));
+}
+
+function renderQualif(m) {
+  const body = $("#qBody"); if (!m) { body.innerHTML = empty("medal", "Aucun match."); return; }
+  const teams = m.teams ? Object.entries(m.teams) : [];
+  if (!teams.length) { body.innerHTML = empty("shield", "Aucune équipe inscrite."); return; }
+  body.innerHTML = `<div class="table-wrap"><table class="table">
+    <thead><tr><th>Équipe</th><th>Joueurs</th><th>Statut</th><th>Rang</th><th>Paiement</th></tr></thead>
+    <tbody>${teams.map(([tid, t]) => qualRow(m.id, tid, t)).join("")}</tbody></table></div>`;
+  teams.forEach(([tid]) => {
+    $(`[data-q="${tid}"]`).onchange = (e) => update(ref(db, `matches/${m.id}/teams/${tid}`), { status: e.target.value || null });
+    $(`[data-rank="${tid}"]`).onchange = (e) => update(ref(db, `matches/${m.id}/teams/${tid}`), { rank: e.target.value ? +e.target.value : null });
+    $(`[data-pay="${tid}"]`).onchange = (e) => update(ref(db, `matches/${m.id}/teams/${tid}`), { paymentStatus: e.target.value });
+  });
+}
+
+function qualRow(mid, tid, t) {
+  const members = t.members ? Object.values(t.members) : [];
+  return `<tr>
+    <td><b>${esc(t.name)}</b></td>
+    <td class="small muted">${members.map((x) => esc(x.name)).join(", ")}</td>
+    <td><select data-q="${tid}" style="padding:7px">
+      <option value="" ${!t.status ? "selected" : ""}>En attente</option>
+      <option value="qualified" ${t.status === "qualified" ? "selected" : ""}>Qualifié</option>
+      <option value="eliminated" ${t.status === "eliminated" ? "selected" : ""}>Non qualifié</option>
+    </select></td>
+    <td><select data-rank="${tid}" style="padding:7px;width:110px">
+      <option value="" ${!t.rank ? "selected" : ""}>—</option>
+      <option value="1" ${t.rank === 1 ? "selected" : ""}>1ʳᵉ place</option>
+      <option value="2" ${t.rank === 2 ? "selected" : ""}>2ᵉ place</option>
+      <option value="3" ${t.rank === 3 ? "selected" : ""}>3ᵉ place</option>
+    </select></td>
+    <td><select data-pay="${tid}" style="padding:7px">
+      <option value="free" ${t.paymentStatus === "free" ? "selected" : ""}>Gratuit</option>
+      <option value="pending" ${t.paymentStatus === "pending" ? "selected" : ""}>En attente</option>
+      <option value="paid" ${t.paymentStatus === "paid" ? "selected" : ""}>Payé</option>
+    </select></td>
+  </tr>`;
+}
+
+/* ============================================================
+   JOUEURS
+   ============================================================ */
+function pgPlayers(m) {
+  m.innerHTML = head("Base de joueurs", "Joueurs") +
+    `<div class="field" style="max-width:360px"><input id="pSearch" placeholder="Rechercher un joueur…"></div>
+     <div class="table-wrap" style="margin-top:14px"><table class="table">
+       <thead><tr><th>Joueur</th><th>ID PUBG</th><th>E-mail</th><th>Rôle</th><th></th></tr></thead>
+       <tbody id="pBody"></tbody></table></div>`;
+  let all = [];
+  const draw = () => {
+    const term = $("#pSearch").value.trim().toLowerCase();
+    const list = all.filter((u) => !term || (u.name || "").toLowerCase().includes(term) || (u.playerId || "").includes(term));
+    $("#pBody").innerHTML = list.length ? list.map((u) => `<tr>
+      <td><div class="row" style="gap:9px"><div class="avatar" style="width:32px;height:32px;font-size:13px">${initials(u.name)}</div>${esc(u.name)}</div></td>
+      <td class="mono">${esc(u.playerId || "—")}</td><td class="small muted">${esc(u.email || "")}</td>
+      <td>${u.role === "admin" ? `<span class="badge ok">Admin</span>` : `<span class="badge">Joueur</span>`}</td>
+      <td><button class="btn btn-sm ${u.role === "admin" ? "btn-red" : ""}" data-role="${u.id}" data-cur="${u.role}">${u.role === "admin" ? "Retirer admin" : "Rendre admin"}</button></td>
+    </tr>`).join("") : `<tr><td colspan="5" class="muted">Aucun joueur.</td></tr>`;
+    $$("[data-role]").forEach((b) => b.onclick = () => {
+      const makeAdmin = b.dataset.cur !== "admin";
+      update(ref(db, "users/" + b.dataset.role), { role: makeAdmin ? "admin" : "player" });
+      toast(makeAdmin ? "Promu administrateur." : "Rétrogradé joueur.", "ok");
+    });
+  };
+  $("#pSearch").oninput = draw;
+  watch(onValue(ref(db, "users"), (s) => { all = snapList(s).sort((a, b) => (a.name || "").localeCompare(b.name || "")); draw(); }));
+}
+
+/* ============================================================
+   ANNONCES
+   ============================================================ */
+function pgAnnounce(m) {
+  m.innerHTML = head("Communication", "Annonces & notifications",
+    `<button class="btn btn-primary" id="addAnn">${icon("plus")} Nouvelle annonce</button>`) +
+    `<div class="col" id="annList">${spinner()}</div>`;
+  $("#addAnn").onclick = annForm;
+  watch(onValue(query(ref(db, "announcements"), orderByChild("createdAt")), (s) => {
+    const list = snapList(s).reverse();
+    $("#annList").innerHTML = list.length ? list.map((a) => `<div class="card">
+      <div class="row between"><b style="font-family:var(--ff-disp);font-size:18px">${esc(a.title)}</b>
+        <button class="btn btn-sm btn-red" data-del="${a.id}">${icon("trash")}</button></div>
+      <p class="muted" style="margin:8px 0">${esc(a.message)}</p>
+      ${a.matchDate ? `<div class="meta-line"><span class="row">${icon("calendar")}${fmtDate(a.matchDate, a.matchTime)}</span></div>` : ""}
+      <div class="small muted" style="margin-top:6px">Publié ${timeAgo(a.createdAt)}</div>
+    </div>`).join("") : empty("bell", "Aucune annonce.");
+    $$("[data-del]", $("#annList")).forEach((b) => b.onclick = () =>
+      confirmModal("Supprimer cette annonce ?", () => remove(ref(db, "announcements/" + b.dataset.del)), { danger: true, yes: "Supprimer" }));
+  }));
+}
+
+function annForm() {
+  const { el, close } = modal({
+    title: "Nouvelle annonce",
+    body: `<div class="field"><label>Titre</label><input id="a_t" placeholder="Ex : Match ce samedi à 20h"></div>
+      <div class="field"><label>Message</label><textarea id="a_m" placeholder="Détails de l'annonce…"></textarea></div>
+      <div class="grid grid-2">
+        <div class="field"><label>Date du match (optionnel)</label><input type="date" id="a_d"></div>
+        <div class="field"><label>Heure (optionnel)</label><input type="time" id="a_h"></div>
+      </div>
+      <p class="small muted">Tous les joueurs recevront cette annonce dans leurs notifications.</p>`,
+    footer: `<button class="btn btn-ghost" data-close>Annuler</button><button class="btn btn-primary" data-ok>${icon("send")} Publier</button>`,
+  });
+  el.querySelector("[data-ok]").onclick = async () => {
+    const title = el.querySelector("#a_t").value.trim();
+    const message = el.querySelector("#a_m").value.trim();
+    if (!title || !message) return toast("Titre et message requis.", "err");
+    await push(ref(db, "announcements"), {
+      title, message, matchDate: el.querySelector("#a_d").value, matchTime: el.querySelector("#a_h").value,
+      createdAt: serverTimestamp(),
+    });
+    close(); toast("Annonce publiée.", "ok");
+  };
+}
+
+/* ============================================================
+   INSCRIPTIONS & PRIX
+   ============================================================ */
+function pgConfig(m) {
+  m.innerHTML = head("Paramètres globaux", "Inscriptions & prix") + `<div id="cfg" style="max-width:560px">${spinner()}</div>`;
+  watch(onValue(ref(db, "config"), (s) => {
+    const c = s.val() || { registrationEnabled: true, freeRegistration: true, registrationPrice: 0 };
+    $("#cfg").innerHTML = `
+      <div class="card" style="margin-bottom:16px">
+        <div class="row" style="gap:14px;align-items:center">
+          <div class="avatar" id="logoPrev" style="width:72px;height:72px;border-radius:16px">${c.logoURL ? `<img src="${esc(c.logoURL)}">` : icon("crosshair")}</div>
+          <div class="grow"><b style="font-family:var(--ff-disp);font-size:18px">Logo de l'application</b>
+            <div class="small muted">Affiché dans l'app joueur et l'admin</div></div>
+          <div class="row" style="gap:8px">
+            <button class="btn btn-sm" id="logoPick">${icon("upload")} Changer</button>
+            ${c.logoURL ? `<button class="btn btn-sm btn-ghost" id="logoRm">${icon("trash")}</button>` : ""}
+          </div>
+          <input type="file" id="logoFile" accept="image/*" class="hidden">
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="list-item" style="border:none;background:transparent;padding:0 0 14px">
+          <div class="grow"><b style="font-family:var(--ff-disp);font-size:18px">Inscriptions activées</b>
+            <div class="small muted">Autoriser les joueurs à rejoindre les tournois</div></div>
+          <label class="toggle"><input type="checkbox" id="c_en" ${c.registrationEnabled ? "checked" : ""}><span></span></label>
+        </div>
+        <div class="list-item" style="border:none;background:transparent;padding:14px 0;border-top:1px solid var(--line-soft)">
+          <div class="grow"><b style="font-family:var(--ff-disp);font-size:18px">Inscription gratuite par défaut</b>
+            <div class="small muted">Si désactivé, un prix s'applique aux nouveaux tournois</div></div>
+          <label class="toggle"><input type="checkbox" id="c_free" ${c.freeRegistration ? "checked" : ""}><span></span></label>
+        </div>
+        <div class="field" style="padding-top:14px;border-top:1px solid var(--line-soft)"><label>Prix d'inscription par défaut (FCFA)</label>
+          <input type="number" id="c_price" value="${c.registrationPrice || 0}"></div>
+      </div>
+      <button class="btn btn-primary" id="c_save">${icon("check")} Enregistrer les paramètres</button>`;
+
+    $("#logoPick").onclick = () => $("#logoFile").click();
+    $("#logoFile").onchange = async (ev) => {
+      const f = ev.target.files[0]; if (!f) return;
+      if (f.size > 8 * 1024 * 1024) return toast("Image trop lourde (max 8 Mo).", "err");
+      toast("Envoi du logo…", "info");
+      try {
+        const url = await uploadFile(f, "branding");
+        await update(ref(db, "config"), { logoURL: url });
+        toast("Logo mis à jour.", "ok");
+      } catch { toast("Échec de l'envoi du logo.", "err"); }
+    };
+    const lrm = $("#logoRm");
+    if (lrm) lrm.onclick = () => confirmModal("Retirer le logo ?", async () => {
+      await update(ref(db, "config"), { logoURL: "" }); toast("Logo retiré.", "ok");
+    }, { danger: true, yes: "Retirer" });
+
+    $("#c_save").onclick = async () => {
+      await update(ref(db, "config"), {
+        registrationEnabled: $("#c_en").checked,
+        freeRegistration: $("#c_free").checked,
+        registrationPrice: +$("#c_price").value || 0,
+      });
+      toast("Paramètres enregistrés.", "ok");
+    };
+  }));
+}
+
+/* ============================================================
+   SUPPORT
+   ============================================================ */
+function pgSupport(m) {
+  m.innerHTML = head("Assistance", "Tickets de support") +
+    `<div class="table-wrap"><table class="table">
+      <thead><tr><th>Joueur</th><th>Sujet</th><th>Statut</th><th>Date</th><th></th></tr></thead>
+      <tbody id="sBody"></tbody></table></div>`;
+  watch(onValue(ref(db, "support"), (s) => {
+    const list = snapList(s).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    $("#sBody").innerHTML = list.length ? list.map((t) => `<tr>
+      <td>${esc(t.name)}</td><td>${esc(t.subject)}</td><td>${badgeStatus(t.status)}</td><td>${timeAgo(t.createdAt)}</td>
+      <td><button class="btn btn-sm btn-primary" data-open="${t.id}">Ouvrir</button></td></tr>`).join("")
+      : `<tr><td colspan="5" class="muted">Aucun ticket.</td></tr>`;
+    $$("[data-open]").forEach((b) => b.onclick = () => openTicketAdmin(b.dataset.open));
+  }));
+}
+
+function openTicketAdmin(id) {
+  const { el } = modal({
+    title: "Ticket support",
+    body: `<div class="chat-wrap" style="height:60vh"><div class="chat-stream" id="tStream">${spinner()}</div>
+      <div class="chat-input"><input id="tText" placeholder="Répondre au joueur…"><button class="btn btn-primary" id="tSend" style="padding:11px 14px">${icon("send")}</button></div></div>`,
+    footer: `<button class="btn btn-red btn-sm" id="tClose">${icon("close")} Clore le ticket</button>`,
+  });
+  onValue(query(ref(db, "support/" + id + "/messages"), orderByChild("ts")), (s) => {
+    const list = snapList(s);
+    $("#tStream").innerHTML = list.map((mm) => `<div class="msg ${mm.from === "admin" ? "me" : ""}">
+      <span class="who">${mm.from === "admin" ? "Vous (admin)" : esc(mm.name)}</span>
+      <div class="bubble">${esc(mm.text)}</div><span class="time">${timeAgo(mm.ts)}</span></div>`).join("");
+    $("#tStream").scrollTop = $("#tStream").scrollHeight;
+  });
+  const send = async () => {
+    const text = $("#tText").value.trim(); if (!text) return;
+    await push(ref(db, "support/" + id + "/messages"), { from: "admin", name: "Support", text, ts: Date.now() });
+    await update(ref(db, "support/" + id), { status: "answered" });
+    $("#tText").value = "";
+  };
+  $("#tSend").onclick = send;
+  $("#tText").onkeydown = (e) => { if (e.key === "Enter") send(); };
+  $("#tClose").onclick = () => { update(ref(db, "support/" + id), { status: "closed" }); toast("Ticket clos.", "ok"); };
+}
+
+/* ============================================================
+   MODÉRATION SHORTS
+   ============================================================ */
+function pgShorts(m) {
+  m.innerHTML = head("Contenu communautaire", "Modération des Shorts") + `<div class="grid grid-auto" id="shGrid">${spinner()}</div>`;
+  watch(onValue(query(ref(db, "shorts"), orderByChild("createdAt")), (s) => {
+    const list = snapList(s).reverse();
+    $("#shGrid").innerHTML = list.length ? list.map((sh) => `<div class="card">
+      <div style="border-radius:9px;overflow:hidden;height:180px;background:#000;margin:-18px -18px 12px">
+        ${sh.type === "video" ? `<video src="${esc(sh.url)}" controls style="width:100%;height:100%;object-fit:cover"></video>` : `<img src="${esc(sh.url)}" style="width:100%;height:100%;object-fit:cover">`}</div>
+      <div class="row between"><div><b>${esc(sh.name)}</b><div class="small muted">${timeAgo(sh.createdAt)} · ${sh.likes ? Object.keys(sh.likes).length : 0} j'aime</div></div>
+        <button class="btn btn-sm btn-red" data-del="${sh.id}">${icon("trash")}</button></div>
+      ${sh.caption ? `<p class="small muted" style="margin-top:8px">${esc(sh.caption)}</p>` : ""}
+    </div>`).join("") : empty("video", "Aucun short publié.");
+    $$("[data-del]", $("#shGrid")).forEach((b) => b.onclick = () =>
+      confirmModal("Supprimer ce short ?", () => remove(ref(db, "shorts/" + b.dataset.del)), { danger: true, yes: "Supprimer" }));
+  }));
+}
+
+/* ============================================================
+   MODÉRATION CHAT
+   ============================================================ */
+function pgChat(m) {
+  m.innerHTML = head("Salon général", "Modération du chat") +
+    `<div class="chat-wrap" style="height:70vh"><div class="chat-stream" id="cmStream">${spinner()}</div></div>`;
+  watch(onValue(query(ref(db, "chat"), orderByChild("createdAt")), (s) => {
+    const list = snapList(s);
+    $("#cmStream").innerHTML = list.length ? list.map((mm) => {
+      let media = "";
+      if (mm.type === "photo") media = `<img src="${esc(mm.url)}" style="max-height:120px">`;
+      else if (mm.type === "video") media = `<video src="${esc(mm.url)}" controls style="max-height:120px"></video>`;
+      else if (mm.type === "audio") media = `<audio src="${esc(mm.url)}" controls></audio>`;
+      return `<div class="msg"><span class="who">${esc(mm.name)}</span>
+        <div class="bubble">${media}${mm.text ? esc(mm.text) : ""}
+          <button class="btn btn-sm btn-red" style="margin-top:8px;display:block" data-del="${mm.id}">${icon("trash")} Supprimer</button></div>
+        <span class="time">${timeAgo(mm.createdAt)}</span></div>`;
+    }).join("") : empty("chat", "Aucun message.");
+    $("#cmStream").scrollTop = $("#cmStream").scrollHeight;
+    $$("[data-del]", $("#cmStream")).forEach((b) => b.onclick = () => remove(ref(db, "chat/" + b.dataset.del)));
+  }));
+}
+</script>
+  <script>
+/* ============================================================
+ *  ESCRIME MALI — Installation PWA (application téléchargeable)
+ *  Génère le manifeste + les icônes à la volée (fichier unique),
+ *  capte l'invite d'installation et pilote le bouton "Installer".
+ *  Script classique autonome (aucun import).
+ * ========================================================== */
+(function () {
+  "use strict";
+
+  var BG = "#0b0e13", AMBER = "#f5a623";
+
+  /* --- Dessine une icône (crosshair amber sur fond sombre) --- */
+  function makeIcon(size) {
+    var c = document.createElement("canvas");
+    c.width = c.height = size;
+    var x = c.getContext("2d"), s = size;
+    x.fillStyle = BG; x.fillRect(0, 0, s, s);
+    var cx = s / 2, cy = s / 2, r = s * 0.30;
+    x.strokeStyle = AMBER; x.lineWidth = s * 0.05;
+    x.lineCap = "round";
+    x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.stroke();
+    x.beginPath();
+    x.moveTo(cx, cy - r * 1.5); x.lineTo(cx, cy - r * 0.55);
+    x.moveTo(cx, cy + r * 0.55); x.lineTo(cx, cy + r * 1.5);
+    x.moveTo(cx - r * 1.5, cy); x.lineTo(cx - r * 0.55, cy);
+    x.moveTo(cx + r * 0.55, cy); x.lineTo(cx + r * 1.5, cy);
+    x.stroke();
+    x.fillStyle = AMBER;
+    x.beginPath(); x.arc(cx, cy, s * 0.04, 0, Math.PI * 2); x.fill();
+    return c.toDataURL("image/png");
+  }
+
+  /* --- Injecte le manifeste (blob, même origine) --- */
+  function installManifest() {
+    try {
+      var i192 = makeIcon(192), i512 = makeIcon(512);
+      var manifest = {
+        name: "Escrime Mali — PUBG Mobile",
+        short_name: "Escrime Mali",
+        description: "Compétition officielle PUBG Mobile au Mali.",
+        start_url: location.href,
+        scope: "./",
+        display: "standalone",
+        orientation: "portrait",
+        background_color: BG,
+        theme_color: BG,
+        lang: "fr",
+        icons: [
+          { src: i192, sizes: "192x192", type: "image/png", purpose: "any maskable" },
+          { src: i512, sizes: "512x512", type: "image/png", purpose: "any maskable" }
+        ]
+      };
+      var blob = new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" });
+      var url = URL.createObjectURL(blob);
+      var link = document.querySelector('link[rel="manifest"]');
+      if (!link) { link = document.createElement("link"); link.rel = "manifest"; document.head.appendChild(link); }
+      link.href = url;
+
+      var apple = document.createElement("link");
+      apple.rel = "apple-touch-icon"; apple.href = i192;
+      document.head.appendChild(apple);
+      var cap = document.createElement("meta");
+      cap.name = "apple-mobile-web-app-capable"; cap.content = "yes";
+      document.head.appendChild(cap);
+    } catch (e) { /* silencieux */ }
+  }
+
+  /* --- Petit toast maison (réutilise le style existant) --- */
+  function toast(msg, type) {
+    var root = document.getElementById("toastRoot") || document.body;
+    var el = document.createElement("div");
+    el.className = "toast " + (type || "info");
+    el.innerHTML = "<span>" + msg + "</span>";
+    root.appendChild(el);
+    setTimeout(function () { el.style.opacity = "0"; el.style.transition = ".3s"; }, 3200);
+    setTimeout(function () { el.remove(); }, 3600);
+  }
+
+  /* --- Fenêtre d'instructions (iOS / navigateurs sans invite) --- */
+  function showGuide(html) {
+    var root = document.getElementById("modalRoot") || document.body;
+    var back = document.createElement("div");
+    back.className = "modal-back";
+    back.innerHTML =
+      '<div class="modal" role="dialog">' +
+        '<div class="modal-head"><h3>Installer l\'application</h3>' +
+        '<button class="icon-btn" data-close style="width:36px;height:36px">✕</button></div>' +
+        '<div class="modal-body">' + html + '</div>' +
+        '<div class="modal-foot"><button class="btn btn-primary" data-close>J\'ai compris</button></div>' +
+      '</div>';
+    back.addEventListener("click", function (e) {
+      if (e.target === back || e.target.closest("[data-close]")) back.remove();
+    });
+    root.appendChild(back);
+  }
+
+  var deferred = null;
+  var isStandalone = window.matchMedia("(display-mode: standalone)").matches ||
+                     window.navigator.standalone === true;
+  var ua = navigator.userAgent || "";
+  var isIOS = /iphone|ipad|ipod/i.test(ua);
+
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    deferred = e;
+    refreshUI();
+  });
+
+  window.addEventListener("appinstalled", function () {
+    deferred = null; isStandalone = true;
+    toast("Application installée ✓", "ok");
+    refreshUI();
+  });
+
+  window.__installApp = async function () {
+    if (isStandalone) { toast("L'application est déjà installée.", "ok"); return; }
+    if (deferred) {
+      deferred.prompt();
+      try { await deferred.userChoice; } catch (e) {}
+      deferred = null; refreshUI();
+      return;
+    }
+    if (isIOS) {
+      showGuide(
+        '<p style="color:var(--muted);line-height:1.6">Sur iPhone / iPad (Safari) :</p>' +
+        '<ol style="color:var(--muted);line-height:1.9;padding-left:18px">' +
+        '<li>Touchez le bouton <b>Partager</b> (carré avec une flèche).</li>' +
+        '<li>Choisissez <b>Sur l\'écran d\'accueil</b>.</li>' +
+        '<li>Validez avec <b>Ajouter</b>.</li></ol>'
+      );
+      return;
+    }
+    showGuide(
+      '<p style="color:var(--muted);line-height:1.6">Pour installer l\'application :</p>' +
+      '<ol style="color:var(--muted);line-height:1.9;padding-left:18px">' +
+      '<li>Ouvrez le <b>menu</b> du navigateur (⋮).</li>' +
+      '<li>Choisissez <b>Installer l\'application</b> ou <b>Ajouter à l\'écran d\'accueil</b>.</li></ol>' +
+      '<p class="small muted" style="margin-top:8px">Sur ordinateur, une icône d\'installation apparaît aussi dans la barre d\'adresse.</p>'
+    );
+  };
+
+  function refreshUI() {
+    var btn = document.getElementById("installAppBtn");
+    var hint = document.getElementById("installHint");
+    var card = document.getElementById("installCard");
+    if (isStandalone) {
+      if (card) card.style.display = "none";
+      if (btn && !card) { btn.disabled = true; btn.textContent = "Application installée ✓"; }
+      return;
+    }
+    if (btn) btn.disabled = false;
+    if (hint) hint.textContent = deferred
+      ? "Prête à installer sur votre appareil"
+      : (isIOS ? "Via Partager → Sur l'écran d'accueil" : "Ajoutez Escrime Mali à votre écran d'accueil");
+  }
+  window.__refreshInstallUI = refreshUI;
+
+  function boot() {
+    installManifest();
+    if ("serviceWorker" in navigator && location.protocol === "https:") {
+      navigator.serviceWorker.register("./sw.js").catch(function () {});
+    }
+    var btn = document.getElementById("installAppBtn");
+    if (btn) btn.addEventListener("click", function () { window.__installApp(); });
+    refreshUI();
+  }
+  if (document.readyState === "loading")
+    document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+
+</script>
+</body>
+</html>
