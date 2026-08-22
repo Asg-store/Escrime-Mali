@@ -466,7 +466,7 @@ const googleProvider = new GoogleAuthProvider();
 // administrateurs même si le rôle n'est pas encore défini dans la base.
 // (Vous pouvez aussi définir role:"admin" dans la Realtime Database.)
 const ADMIN_EMAILS = [
-  // "votre-email@gmail.com"
+  "asgmali82@gmail.com"
 ];
 
 /* ---------- Icônes SVG ---------- */
@@ -640,8 +640,13 @@ injectIcons();
 onAuthStateChanged(auth, async (user) => {
   if (!user) { gate("Vous devez être connecté. Redirection…"); setTimeout(() => location.href = "index.html", 1500); return; }
   A.user = user;
-  const p = (await get(ref(db, "users/" + user.uid))).val() || {};
-  const isAdmin = p.role === "admin" || ADMIN_EMAILS.includes(user.email);
+  let p = (await get(ref(db, "users/" + user.uid))).val() || {};
+  const listed = ADMIN_EMAILS.includes(user.email);
+  if (listed && p.role !== "admin") {
+    try { await update(ref(db, "users/" + user.uid), { role: "admin" }); p.role = "admin"; }
+    catch (e) { /* les règles peuvent bloquer ; l'accès reste ouvert via la liste */ }
+  }
+  const isAdmin = p.role === "admin" || listed;
   if (!isAdmin) { gate("Accès refusé : ce compte n'est pas administrateur."); return; }
   A.profile = p;
   $("#gate").classList.add("hidden");
