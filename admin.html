@@ -638,7 +638,7 @@ injectIcons();
 
 /* ---------------- Contrôle d'accès ---------------- */
 onAuthStateChanged(auth, async (user) => {
-  if (!user) { gate("Vous devez être connecté. Redirection…"); setTimeout(() => location.href = "index.html", 1500); return; }
+  if (!user) { showLogin(); return; }
   A.user = user;
   let p = (await get(ref(db, "users/" + user.uid))).val() || {};
   const listed = ADMIN_EMAILS.includes(user.email);
@@ -647,7 +647,7 @@ onAuthStateChanged(auth, async (user) => {
     catch (e) { /* les règles peuvent bloquer ; l'accès reste ouvert via la liste */ }
   }
   const isAdmin = p.role === "admin" || listed;
-  if (!isAdmin) { gate("Accès refusé : ce compte n'est pas administrateur."); return; }
+  if (!isAdmin) { showDenied(user.email); return; }
   A.profile = p;
   $("#gate").classList.add("hidden");
   $("#console").classList.remove("hidden");
@@ -658,6 +658,50 @@ onAuthStateChanged(auth, async (user) => {
   });
   go("dashboard");
 });
+
+function loginError(err) {
+  const m = {
+    "auth/invalid-credential": "E-mail ou mot de passe incorrect.",
+    "auth/invalid-email": "E-mail invalide.",
+    "auth/user-not-found": "Aucun compte pour cet e-mail.",
+    "auth/wrong-password": "Mot de passe incorrect.",
+    "auth/too-many-requests": "Trop de tentatives. Réessayez plus tard.",
+  };
+  return m[err && err.code] || "Erreur de connexion.";
+}
+
+function showLogin(errMsg) {
+  const g = $("#gateMsg"); if (!g) return;
+  g.className = "";
+  g.innerHTML = `
+    <p class="muted" style="margin:2px 0 14px">Connectez-vous avec un compte administrateur.</p>
+    <form id="adminLogin" style="text-align:left">
+      <div class="field"><label>E-mail</label><input type="email" id="adEmail" placeholder="admin@exemple.com" autocomplete="username" required></div>
+      <div class="field"><label>Mot de passe</label><input type="password" id="adPass" placeholder="••••••••" autocomplete="current-password" required></div>
+      ${errMsg ? `<p style="color:var(--red);font-size:13px;margin:2px 0 6px">${esc(errMsg)}</p>` : ""}
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:6px">${icon("lock")} Se connecter</button>
+    </form>`;
+  const f = $("#adminLogin");
+  f.onsubmit = async (e) => {
+    e.preventDefault();
+    const btn = f.querySelector("button[type=submit]");
+    btn.disabled = true; btn.innerHTML = "Connexion…";
+    try {
+      await signInWithEmailAndPassword(auth, $("#adEmail").value.trim(), $("#adPass").value);
+    } catch (err) {
+      showLogin(loginError(err));
+    }
+  };
+}
+
+function showDenied(email) {
+  const g = $("#gateMsg"); if (!g) return;
+  g.className = "";
+  g.innerHTML = `
+    <p class="muted">Ce compte (${esc(email)}) n'est pas administrateur.</p>
+    <button class="btn btn-block" id="switchAcc" style="margin-top:12px">${icon("logout")} Se connecter avec un autre compte</button>`;
+  $("#switchAcc").onclick = () => signOut(auth);
+}
 
 function applyBranding(logo) {
   document.querySelectorAll(".brand-mark, .topbar-mark").forEach((el) => {
@@ -674,8 +718,6 @@ async function uploadFile(file, folder) {
   await uploadBytes(r, file);
   return await getDownloadURL(r);
 }
-
-function gate(msg) { $("#gateMsg").outerHTML = `<p class="muted">${esc(msg)}</p>`; }
 
 function go(page) {
   A.page = page; clear();
