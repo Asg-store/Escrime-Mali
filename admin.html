@@ -423,6 +423,7 @@ select option { background: var(--bg-2); }
         <button data-page="matches"><span data-icon="trophy"></span>Matchs & tournois</button>
         <button data-page="qualif"><span data-icon="medal"></span>Qualifications</button>
         <button data-page="players"><span data-icon="users"></span>Joueurs</button>
+        <button data-page="admins"><span data-icon="shield"></span>Administrateurs</button>
         <button data-page="announce"><span data-icon="bell"></span>Annonces</button>
         <button data-page="config"><span data-icon="money"></span>Inscriptions & prix</button>
         <button data-page="support"><span data-icon="headset"></span>Support</button>
@@ -637,17 +638,31 @@ const snapList = (s) => { const o = []; s.forEach((c) => { const v = c.val() || 
 injectIcons();
 
 /* ---------------- Contrôle d'accès ---------------- */
+function normalizeEmails(v) {
+  if (!v) return [];
+  const arr = Array.isArray(v) ? v : Object.values(v);
+  return arr.filter(Boolean).map((x) => String(x).trim().toLowerCase());
+}
+
 onAuthStateChanged(auth, async (user) => {
   if (!user) { showLogin(); return; }
   A.user = user;
   let p = (await get(ref(db, "users/" + user.uid))).val() || {};
-  const listed = ADMIN_EMAILS.includes(user.email);
-  if (listed && p.role !== "admin") {
-    try { await update(ref(db, "users/" + user.uid), { role: "admin" }); p.role = "admin"; }
-    catch (e) { /* les règles peuvent bloquer ; l'accès reste ouvert via la liste */ }
+  const email = (user.email || "").toLowerCase();
+  const codeList = ADMIN_EMAILS.map((x) => String(x).toLowerCase());
+  let dbList = [];
+  try { dbList = normalizeEmails((await get(ref(db, "config/adminEmails"))).val()); } catch (e) {}
+  const allowed = p.role === "admin" || codeList.includes(email) || dbList.includes(email);
+  if (!allowed) { showDenied(user.email); return; }
+  // Enregistre le rôle admin (fonctionne en mode test ou si les règles l'autorisent)
+  if (p.role !== "admin") {
+    try {
+      await update(ref(db, "users/" + user.uid), {
+        role: "admin", email: user.email || "", name: p.name || user.displayName || "Admin",
+      });
+      p.role = "admin";
+    } catch (e) { /* accès maintenu via la liste ; l'écriture peut être bloquée par des règles strictes */ }
   }
-  const isAdmin = p.role === "admin" || listed;
-  if (!isAdmin) { showDenied(user.email); return; }
   A.profile = p;
   $("#gate").classList.add("hidden");
   $("#console").classList.remove("hidden");
@@ -724,7 +739,7 @@ function go(page) {
   $$("#adminNav button").forEach((b) => b.classList.toggle("active", b.dataset.page === page));
   const m = $("#adminMain"); m.innerHTML = spinner();
   ({ dashboard: pgDashboard, matches: pgMatches, qualif: pgQualif, players: pgPlayers,
-     announce: pgAnnounce, config: pgConfig, support: pgSupport, shorts: pgShorts, chat: pgChat }[page])(m);
+     announce: pgAnnounce, config: pgConfig, admins: pgAdmins, support: pgSupport, shorts: pgShorts, chat: pgChat }[page])(m);
 }
 
 const head = (eyebrow, title, action = "") =>
@@ -1052,6 +1067,51 @@ function pgConfig(m) {
       });
       toast("Paramètres enregistrés.", "ok");
     };
+  }));
+}
+
+/* ============================================================
+   ADMINISTRATEURS (équipe)
+   ============================================================ */
+function pgAdmins(m) {
+  m.innerHTML = head("Équipe", "Administrateurs") + `
+    <div class="card" style="max-width:640px;margin-bottom:16px">
+      <div class="field" style="margin:0"><label>Ajouter un administrateur (e-mail)</label>
+        <div class="row" style="gap:8px">
+          <input id="aeMail" type="email" placeholder="admin@exemple.com" class="grow">
+          <button class="btn btn-primary" id="aeAdd">${icon("plus")} Ajouter</button>
+        </div>
+        <div class="small muted" style="margin-top:8px">
+          1) Créez d'abord le compte (e-mail + mot de passe) dans <b>Firebase → Authentication → Ajouter un utilisateur</b>.
+          2) Ajoutez ici le même e-mail. Cette personne pourra alors ouvrir <b>admin.html</b> avec son e-mail et son mot de passe.
+        </div>
+      </div>
+    </div>
+    <div id="aeList">${spinner()}</div>`;
+
+  $("#aeAdd").onclick = async () => {
+    const em = $("#aeMail").value.trim().toLowerCase();
+    if (!em || !em.includes("@")) return toast("E-mail invalide.", "err");
+    const cur = normalizeEmails((await get(ref(db, "config/adminEmails"))).val());
+    if (cur.includes(em)) return toast("Cet e-mail est déjà administrateur.", "info");
+    await push(ref(db, "config/adminEmails"), em);
+    $("#aeMail").value = ""; toast("Administrateur ajouté.", "ok");
+  };
+
+  watch(onValue(ref(db, "config/adminEmails"), (s) => {
+    const rows = []; s.forEach((c) => rows.push({ id: c.key, email: c.val() }));
+    const owner = (ADMIN_EMAILS[0] || "").toLowerCase();
+    $("#aeList").innerHTML = `
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:12px">Administrateurs autorisés</div>
+        ${owner ? `<div class="list-item"><div class="grow">${esc(owner)} <span class="badge ok" style="margin-left:6px">Propriétaire</span></div></div>` : ""}
+        ${rows.length ? rows.map((r) => `<div class="list-item">
+            <div class="grow">${esc(r.email)}</div>
+            <button class="btn btn-sm btn-red" data-rm="${r.id}">${icon("trash")} Retirer</button>
+          </div>`).join("") : `<p class="muted" style="margin-top:8px">Aucun e-mail ajouté pour l'instant.</p>`}
+      </div>`;
+    $$("[data-rm]").forEach((b) => b.onclick = () =>
+      confirmModal("Retirer cet administrateur ?", () => remove(ref(db, "config/adminEmails/" + b.dataset.rm)), { danger: true, yes: "Retirer" }));
   }));
 }
 
