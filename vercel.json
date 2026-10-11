@@ -1,0 +1,114 @@
+{
+  "crons": [
+    {
+      "path": "/api/scheduled-notify",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/fx-update",
+      "schedule": "0 6 * * *"
+    }
+  ],
+  "functions": {
+    "api/flashtopup-deliver.js": {
+      "maxDuration": 60
+    },
+    "api/moneyfusion.js": {
+      "maxDuration": 30
+    },
+    "api/shop.js": {
+      "maxDuration": 20
+    },
+    "api/send-push.js": {
+      "maxDuration": 30
+    },
+    "api/mgloot-plus.js": {
+      "maxDuration": 20
+    },
+    "api/fx-update.js": {
+      "maxDuration": 15
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/success",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/payment/success",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/payment/cancel",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/.well-known/assetlinks.json",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/admin.html",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.mgloot.com"
+        }
+      ],
+      "destination": "https://mgloot.com/$1",
+      "permanent": true
+    },
+    {
+      "source": "/android.keystore",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/twa-manifest.json",
+      "destination": "/",
+      "permanent": false
+    }
+  ]
+}

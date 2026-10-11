@@ -1,0 +1,15 @@
+{
+  "name": "mgloot",
+  "version": "2.0.0",
+  "private": true,
+  "description": "MgLoot — boutique gaming (PWA statique + fonctions serverless Vercel, base Supabase)",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
+    "firebase-admin": "^12.7.0",
+    "nodemailer": "^6.9.14",
+    "undici": "^5.28.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
